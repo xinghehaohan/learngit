@@ -50,6 +50,52 @@
     </style>
 </head>
 <body>
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<div id="message_block">
+    <ul id="messages"></ul>
+</div>
+<input id="m" autocomplete="off" /><button id="send">Send</button>
+<script>
+  var socket = io();
+  $(document).ready(function () {
+      var name = prompt('请输入您的昵称呀','AlanTuring');
+      if(name ==='' || name === null){
+          name = 'AlanTuring';
+      }
+      socket.emit('add user',name);
 
+      socket.on('chat message',function (data) {
+          appendMessage(data.username+':'+data.msg);
+      });
+
+      socket.on('add user',function (data) {
+         appendMessage(data.username+'已加入');
+      });
+
+      socket.on('user left',function (data) {
+         appendMessage(data.username+'已离开');
+      });
+
+      $('#send').on('click',function () {
+          var text = $('#m').val();
+          socket.emit('chat message',text);
+          $('#m').val('');
+          return false;
+      });
+
+      $('#m').on('keydown',function (event) {
+         if (event.keyCode===13){
+             $('#send').click();
+         }
+      });
+      
+      function appendMessage(msg) {
+          $('#messages').append($('<li>').text(msg));
+          var message = document.getElementById('message_block');
+          message.scrollTop = message.scrollHeight;
+      }
+  });
+</script>
 </body>
 </html>
