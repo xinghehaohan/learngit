@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav>
+    <div class="container">
+        <ul class="nav nav-pills navbar-left" role="tablist">
+            <li role="presentation" class="active"><a href="#">首页</a></li>
+            <li role="presentation"><a href="#">关于</a></li>
+            <li role="presentation"><a href="#">亮点</a></li>
+            <li role="presentation"><a href="#">价格</a></li>
+        </ul>
+        <ul class="nav nav-pills navbar-right" role="tablist">
+            <li role="presentation"><a href="#">注册</a></li>
+            <li role="presentation"><a href="#">登录</a></li>
+        </ul>
+    </div>
+</nav>
+<div id="info"  style="height: 1000px;width: 100%">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>排序</th>
+            <th>主题</th>
+            <th>内容</th>
+        </tr>
+        </thead>
+        <tbody id="bo">
+
+        </tbody>
+    </table>
+</div>
+<script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    var url ='http://localhost:8088/';
+    var img =[];
+    $.ajax({
+        url:url+'api/news/latest',
+        type:'get',
+        async:'true',
+        success:function (data) {
+//            console.log(data);
+            $.each(data.stories,function (index,val) {
+                img.push(val.images[0]);
+                var tr = $('<tr><td>'+Number(index+1)+'</td><td>'+val.title+'</td>' +
+                        '<t' +
+                        'd><a href="content.html" type="button" data-id="'+val.id+'" class="btn btn-default">查看内容</a></td></tr>');
+                $('#bo').append(tr);
+                tr.find('a').click(function () {
+                    var id = $(this).data('id');
+                    $(this).attr('href','content.html?'+id+'')
+                })
+            });
+
+//            console.log(img);
+        }
+    });
+</script>
+</body>
+</html>
