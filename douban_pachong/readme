@@ -1,0 +1,15 @@
+ dat文件夹下存放豆瓣电影前250的数据，每个文件存放25条
+ 文件名为 o +pageSize25/2525/5025....
+ 爬取数据代码为：index.js
+    数据结构[{
+contentUrl:"https://movie.douban.com/subject/1292052/"
+daoyan:"导演: 弗兰克·德拉邦特 Frank Darabont   主演: 蒂姆·罗宾斯 Tim Robbins /...↵                            1994 / 美国 / 犯罪 剧情↵                        ↵                                希望让人自由。↵                            "
+imageUrl:"https://img3.doubanio.com/view/movie_poster_cover/ipst/public/p480747492.jpg"
+pingjia:"856525人评价"
+quote:"希望让人自由。"
+star:"9.6"
+title:"肖申克的救赎 / The Shawshank Redemption / 月黑高飞(港)  /  刺激1995(台)"
+    }]
+
+ moveDetail.js
+ 爬取每个电影的详情页将url地址存在detailes/contentUrl.json中。
