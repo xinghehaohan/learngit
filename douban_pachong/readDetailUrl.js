@@ -6,44 +6,64 @@ var http = require('http'),
     fs = require('fs'),
     path = require('path'),
     cheerio = require('cheerio');
+var request = require("request");
 var eventproxy = require('eventproxy');
 
     var urls = [];
     var info = [];
+    var proxys = [];
     var flag = false;
+var ep = new eventproxy();
 fs.readFile('./detailes/contentUrl.json','utf-8',function (err,data) {
         if (err){
             console.log(err)
         }
-        urls = JSON.parse(data)
-        console.log('down');
-        flag = true;
-    });
+        urls = JSON.parse(data).splice(125);
+        // console.log(urls)
+    flag = true;
+});
 
+fs.readFile('./proxys/proxys.json','utf-8',function (err,data) {
+    if (err){
+        console.log(err)
+    }
+    proxys = JSON.parse(data)
+    // flag = true;
+});
+    var count = 99;
     function readItemUrl(url) {
-        console.log('url'+url)
-        https.get(url,function (res) {
-            var html ='';
-            res.setEncoding('utf-8');
-            res.on('data',function (chunk) {
-                html += chunk
-            })
-            res.on('end',function () {
-                var $ = cheerio.load(html);
-                info.push({
-                    title:$('#content h1').first().find('span').first().text(),
-                    summary:$('#link-report span').first().text(),
-                    attrs:$('#info .attrs a').text(),
-                    language:$('#info .pl').eq(5).parent().text(),
-                    doctor:$('#info .attrs a').text(),
-                    country:$('#info .pl').eq(4).parent().text(),
-                    flash:$('#related-pic .related-pic-bd li img').attr('rc'),
-                    poster:$('#mainpic img').attr('src'),
-                    year:$('#info .pl').eq(6).parent().text(),
-                });
-                ep.emit('down',info)
-            })
-        });
+        var options = {
+            url: url,
+            // proxy:proxys[ Math.floor(Math.random()*10+1)] ,
+            method: 'GET',
+            // timeout: 20000,  //20s没有返回则视为代理不行,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
+            } //给个浏览器头，不然网站拒绝访问
+        };
+            request(options,function (error,res) {
+                if(error){
+                    console.log(error)
+                }
+                    count--
+                    console.log(url +'count:'+count)
+                var $ = cheerio.load(res.body);
+                    info.push({
+                        title:$('#content h1').first().find('span').first().text(),
+                        summary:$('#link-report span').first().text(),
+                        language:$('.rating_people').find('span').text(),
+                        doctor:$('#info .attrs').eq(0).find('a').text(),
+                        country:$('.rating_num').text(),
+                        flash:$('#related-pic .related-pic-bd li img').attr('src'),
+                        poster:$('#mainpic img').attr('src'),
+                        year:$('.year').text(),
+                    });
+                    if(count ==0){
+                        saveData('./movieDetails/Movie.json',info)
+                    }
+                    // ep.emit('down',info)
+            });
+
     }
 
 function saveData (path,movies) {
@@ -54,7 +74,6 @@ function saveData (path,movies) {
         console.log('dataSaved!')
     })
 }
-var ep = new eventproxy();
     var timmer = setInterval(function () {
         if(flag){
             urls.forEach(function (url) {
@@ -64,7 +83,7 @@ var ep = new eventproxy();
         }
 
     },1000);
-// readItemUrl(urls[1])
-ep.after('down',1,function (info) {
-    saveData('./movieDetails/Movie.json',info)
-});
+// ep.after('down',urls.length,function (info) {
+//     saveData('./movieDetails/Movie.json',info)
+// });
+

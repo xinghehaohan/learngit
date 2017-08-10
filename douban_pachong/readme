@@ -1,4 +1,4 @@
- dat文件夹下存放豆瓣电影前250的数据，每个文件存放25条
+ 1,dat文件夹下存放豆瓣电影前250的数据，每个文件存放25条
  文件名为 o +pageSize25/2525/5025....
  爬取数据代码为：index.js
     数据结构[{
@@ -11,5 +11,13 @@ star:"9.6"
 title:"肖申克的救赎 / The Shawshank Redemption / 月黑高飞(港)  /  刺激1995(台)"
     }]
 
- moveDetail.js
- 爬取每个电影的详情页将url地址存在detailes/contentUrl.json中。
+
+    2,moveDetail.js
+    爬取每个电影的详情页将url地址存在detailes/contentUrl.json中。
+    3,save.js  将存在data文件夹下的数据取出存在mongodb数据库中供网站数据
+    4,readDetailUrl.js
+    将movieDetails文件夹中的250个电影页面url中单个数据取出，存在数据库中（数据量全）
+    5，proxys.js
+    将可以使用的国内高匿代理保存成json文件
+
+
